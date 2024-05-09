@@ -1,5 +1,5 @@
 import math
-from typing import Dict, List
+from typing import Dict, List, DefaultDict
 from point2d import Point2D
 
 from constants import EPSILON
@@ -44,12 +44,9 @@ class PointSetSymmetryAnalyzer:
         """
         lines = SymmetryLineSet()
         # Create a partition of the points per color
-        color_to_points = {}
+        color_to_points = DefaultDict(list)
         for pt in points.get():
-            if pt["color"] not in color_to_points:
-                color_to_points[pt["color"]] = [pt]
-            else:
-                color_to_points[pt["color"]].append(pt)
+            color_to_points[pt["color"]].append(pt)
 
         # Determine for each point P whether (PB) is a symmetry line:
         for pt in points.get():

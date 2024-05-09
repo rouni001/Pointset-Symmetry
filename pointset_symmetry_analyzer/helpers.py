@@ -133,7 +133,7 @@ class SymmetryLineValidator:
         symmetric: Checks whether a line is a symmetric to a set of 
             mono-colored points.
         aligned: Checks whether a point is aligned with a line.
-        get_projected_distance_key: Computes the key of the relative of 
+        calculate_projected_distance_key: Computes the key of the relative of 
             a projected point against a line. 
 
     """
@@ -169,8 +169,9 @@ class SymmetryLineValidator:
             if SymmetryLineValidator.is_aligned(point, line, barycenter):
                  points_on_line_count += 1
             else:
-                distance_key = SymmetryLineValidator.get_projected_distance_key(
-                    point["distance_barycenter"], angle_barycenter_point_vs_line
+                distance_key = SymmetryLineValidator.calculate_projected_distance_key(
+                    point["distance_barycenter"], 
+                    angle_barycenter_point_vs_line
                     )
                 if distance_key not in unique_projected_points_count:
                     unique_projected_points_count.add(distance_key)
@@ -198,7 +199,7 @@ class SymmetryLineValidator:
             abs((abs(angle) - math.pi) % math.pi) < EPSILON
     
     @staticmethod
-    def get_projected_distance_key(
+    def calculate_projected_distance_key(
         distance_barycenter: float, point_line_barycenter_angle: float
         ) -> str:
         """
