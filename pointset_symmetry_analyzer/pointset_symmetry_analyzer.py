@@ -140,11 +140,19 @@ class PointSetSymmetryAnalyzer:
 
     @staticmethod
     def create_symmetry_lines_endpoints(
-        barycenter: Point2D, radius: float, symmetry_directions: List[Point2D]
+        barycenter: Point2D, length: float, symmetry_directions: List[Point2D]
         ) -> Dict[str, List[Point2D]]:
         """
         Returns the coordinates of the symmetry lines.
 
+        Parameters:
+            barycenter (Point2D): The barycenter where the lines
+                must be drawn from.
+            length (float): The length of the line to draw from either side
+              of the barycenter.
+            symmetry_directions (List[Point2D]): The directions of the 
+                symmetry lines from the barycenter.
+                 
         Returns:
             Dict[str, List[Point2D]]: A dictionary providing for each 
                 identified symmetry line L two 2D points delimiting L.
@@ -152,10 +160,10 @@ class PointSetSymmetryAnalyzer:
         res = {}
         for direction in symmetry_directions.values():
             res[direction] = [
-                Point2D(barycenter.x + math.cos(direction.a) * radius, 
-                        barycenter.y + math.sin(direction.a) * radius),
-                Point2D(barycenter.x - math.cos(direction.a) * radius, 
-                        barycenter.y - math.sin(direction.a) * radius)
+                Point2D(barycenter.x + math.cos(direction.a) * length, 
+                        barycenter.y + math.sin(direction.a) * length),
+                Point2D(barycenter.x - math.cos(direction.a) * length, 
+                        barycenter.y - math.sin(direction.a) * length)
             ]
         return res
     
@@ -164,11 +172,15 @@ class PointSetSymmetryAnalyzer:
         lines: SymmetryLineSet, new_symmetry_line: Point2D
         ) -> None:
         """
-        Populates the SymmetryLineSet object with new symmetry lines inferred 
-        from "new_symmetry_line" and the known symmetry lines.
+        Extend the SymmetryLineSet object 'lines' with new symmetry lines 
+        inferred from its listed lines and the "new_symmetry_line".
+
+        Parameters:
+            lines (SymmetryLineSet): Contains symmetry lines.
+            new_symmetry_line (Point2D): A symmetry line not in "lines".
         """
         new_lines: Dict[str, Point2D] = {}
-        # Searching for symmetry lines possibly not identified yet:
+        # Searching for symmetry lines not listed in lines:
 
         for existing_line in lines.get_symmetric_lines().values() :
             angle_step = existing_line.a - new_symmetry_line.a
@@ -176,7 +188,7 @@ class PointSetSymmetryAnalyzer:
             # "new_symmetry_line": 
             line_from_new = Point2D(0,0)
             line_from_new.a = (new_symmetry_line.a - angle_step) % math.pi
-            # Check whether L is already known:
+            # Check whether L is already added:
             if LineDirectionKey.calculate(line_from_new) not in new_lines:
                 new_lines[LineDirectionKey.calculate(line_from_new)] = \
                     line_from_new
@@ -184,7 +196,7 @@ class PointSetSymmetryAnalyzer:
             # against "existing_line": 
             line_from_existing = Point2D(0,0)
             line_from_existing.a = (existing_line.a + angle_step) % math.pi
-            # Check whether M is already known:
+            # Check whether M is already added:
             if LineDirectionKey.calculate(line_from_existing) not in new_lines:
                 new_lines[LineDirectionKey.calculate(line_from_existing)] = \
                     line_from_existing
