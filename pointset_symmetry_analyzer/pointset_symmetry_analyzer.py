@@ -45,17 +45,20 @@ class PointSetSymmetryAnalyzer:
         lines = SymmetryLineSet()
         # Create a partition of the points per color
         color_to_points = DefaultDict(list)
-        for pt in points.get():
-            color_to_points[pt["color"]].append(pt)
+        for p in points.get():
+            color_to_points[p["color"]].append(p)
 
-        # Determine for each point P whether (PB) is a symmetry line:
-        for pt in points.get():
-            if (pt["location"] - points.barycenter()).r < EPSILON:
+        for p in points.get():
+            if (p["location"] - points.barycenter()).r < EPSILON:
                 continue
-            line =  points.barycenter() - pt["location"]
-            # Check if (PB) is a symmetry line already found or tested
+            # Determine the direction of the (PB), the line passing
+            # through the barycenter B and the current point p:
+            line =  points.barycenter() - p["location"]
+
+            # Skip if (PB) is a symmetry line already found/tested:
             if lines.contains(line):
                 continue
+            # Check whether (PB) is symmetric across the points partition:
             symmetry = PointSetSymmetryAnalyzer.is_symmetric(
                 color_to_points, line, points.barycenter()
                 )
@@ -64,18 +67,25 @@ class PointSetSymmetryAnalyzer:
             lines.add(line, symmetry)
 
         if points.size() %  2 == 0:    
-        # Find more symmetry Lines between points when the set size is odd:
+        # Find more symmetry using equidistant points when the size is even:
             for partition_block in color_to_points.values():
                 if len(partition_block) == 1:
                     continue    
-                for idx_a in range(len(partition_block)):
-                    for idx_b in range(idx_a + 1, len(partition_block)):
-                        mid_point = partition_block[idx_a]["location"] + \
-                            partition_block[idx_b]["location"]
+                for a in range(len(partition_block)):
+                    for b in range(a + 1, len(partition_block)):
+                        # Determine the direction of the (MB), the line passing
+                        # through B and the midpoint M of 2 equidistant points,
+                        # A and B, using the current partition blocck:
+                        mid_point = partition_block[a]["location"] + \
+                            partition_block[b]["location"]
                         mid_point.r /= 2.0
                         line =  points.barycenter() - mid_point
+
+                        # Skip if (MB) is a symmetry line already found/tested:
                         if lines.contains(line):
                             continue
+                        # Check whether (MB) is symmetric across the points 
+                        # partition:
                         symmetric = PointSetSymmetryAnalyzer.is_symmetric(
                             color_to_points, line, points.barycenter()
                             )

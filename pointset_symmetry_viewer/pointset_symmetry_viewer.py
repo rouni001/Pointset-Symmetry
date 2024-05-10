@@ -1,9 +1,8 @@
 from typing import Dict, List
-from point2d import Point2D
 import matplotlib.pyplot as plt
+from point2d import Point2D
 
 from pointset import PointSet
-
 
 
 class PointSetSymmetryViewer:

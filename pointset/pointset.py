@@ -5,6 +5,7 @@ from constants import EPSILON
 from file_data_importer import FileDataImporter
 from point import Point
 
+
 class PointSet:
     """
     Annotates a set of points from a CSV file.
