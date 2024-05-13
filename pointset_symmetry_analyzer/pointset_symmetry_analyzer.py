@@ -23,6 +23,8 @@ class PointSetSymmetryAnalyzer:
             points at their edges, from a PointSet object.
         is_symmetric: Check whether a line is a symmetry line
             giving the topology of the pointset.
+        create_bisector_line: Returns the direction of the bisector line 
+            between two points equidistant to the barycenter.
         create_symmetry_lines_endpoints: Returns coordinates of the symmetry 
             lines.
         infer_next_symmetric: Populates the SymmetryLineSet object with new 
@@ -73,14 +75,14 @@ class PointSetSymmetryAnalyzer:
                     continue    
                 for a in range(len(partition_block)):
                     for b in range(a + 1, len(partition_block)):
-                        # Determine the direction of the (MB), the line passing
-                        # through B and the midpoint M of 2 equidistant points,
-                        # A and B, using the current partition blocck:
-                        mid_point = partition_block[a]["location"] + \
-                            partition_block[b]["location"]
-                        mid_point.r /= 2.0
-                        line =  points.barycenter() - mid_point
-
+                        # Determine MB, the bisector line of [AB] (A and B are
+                        # two points equidistant to B, from the same partition
+                        # block):
+                        line = PointSetSymmetryAnalyzer.create_bisector_line(
+                            partition_block[a]["location"],
+                            partition_block[b]["location"],
+                            points.barycenter()
+                        )
                         # Skip if (MB) is a symmetry line already found/tested:
                         if lines.contains(line):
                             continue
@@ -137,6 +139,37 @@ class PointSetSymmetryAnalyzer:
                 ):
                 return False
         return True
+
+    @staticmethod
+    def create_bisector_line(
+        pt_a: Point2D, pt_b: Point2D, barycenter: Point2D
+        ) -> Point2D:
+        """
+        Computes the direction of the bisector line of [AB] passing through the
+        barycenter B.
+
+        Parameters:
+            pt_a (Point2D): Point A
+            pt_b (Point2D): Point B
+            barycenter (Point2D): Barycenter 
+
+        Returns:
+            (Point2D): The direction of the bisector line of (AB)
+
+        """
+        mid_point = pt_a + pt_b
+        mid_point.r /= 2.0
+        line = barycenter - mid_point
+        if line.r < EPSILON:
+            line = Point2D()
+            line.polar(
+                1, 
+                (math.atan2(
+                    pt_b.y - pt_a.y, 
+                    pt_b.x - pt_a.x
+                    ) + math.pi / 2) % math.pi
+                )
+        return line
 
     @staticmethod
     def create_symmetry_lines_endpoints(
