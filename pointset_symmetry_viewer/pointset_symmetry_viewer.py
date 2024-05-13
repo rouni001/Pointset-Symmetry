@@ -1,9 +1,8 @@
 from typing import Dict, List
-from point2d import Point2D
 import matplotlib.pyplot as plt
+from point2d import Point2D
 
 from pointset import PointSet
-
 
 
 class PointSetSymmetryViewer:
@@ -18,7 +17,7 @@ class PointSetSymmetryViewer:
     Static Methods:
         plot: Plots and generates a figure image placing the points and the 
             symmetry lines.
-        get_color_name: Returns a RGBA code corresponding to a color index.
+        color_for_index: Returns a color name corresponding to a color index.
     """
     @staticmethod
     def plot(
@@ -47,7 +46,7 @@ class PointSetSymmetryViewer:
         y_coords = [pt["location"].y for pt in points.get()]
         labels = points.ids()
         colors = [
-            PointSetSymmetryViewer.get_color_name(c) for c in points.colors()
+            PointSetSymmetryViewer.color_for_index(c) for c in points.colors()
             ]
 
         if include_barycenter:
@@ -73,7 +72,7 @@ class PointSetSymmetryViewer:
         plt.show()
 
     @staticmethod
-    def get_color_name(index: int) -> str:
+    def color_for_index(index: int) -> str:
         """
         Returns a color name corresponding to a color group index.
 
@@ -81,8 +80,7 @@ class PointSetSymmetryViewer:
             index (int): A color group index
 
         Returns:
-            Tuple[float, float, float, float]: RGBA code value corresponding
-                to the indx.
+            str: color name corresponding to the color index.
         """
         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
         return colors[index % len(colors)]

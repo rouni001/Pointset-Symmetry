@@ -4,14 +4,14 @@
 Rachid Ounit, Ph.D.
 
 ### DATE
-05/07/2024
+05/08/2024
 
 ### DESCRIPTION
-This project contains the Python scripts used to analyze a point set and find
+This project contains the Python scripts to analyze a point set and find
 its symmetry lines.
 
 ### VERSION
-0.1.1
+0.1.2
 
 ### COMPONENTS:
 This project is composed of modules:
@@ -34,9 +34,9 @@ matplotlib
 point2d
 typing_extensions
 ```
-A requirememts.txt file is provided, please use it:
+A requirements.txt file is provided, please use it:
 ```
-pip3 install -r ./requirememts.txt
+pip3 install -r ./requirements.txt
 ```
 
 ### EXECUTION / TESTS: 
